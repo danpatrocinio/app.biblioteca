@@ -1,0 +1,66 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="autor = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal" data-target="#autorModal">
+                Novo
+            </button>
+        </div>
+    </form>
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table table-striped table-sm" ng-show="autores.length">
+        <thead>
+            <th style="width: 5%"><a href="" ng-click="ordenarPor('idAutor')">Cód.</a></th>
+            <th><a href="" ng-click="ordenarPor('nome')">Nome</a> </th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="elemento in autores | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao" ng-class="{'cor-linha negrito': elemento.selecionado}">
+                <td style="width: 5%">{{elemento.idAutor}}</td>
+                <td title="{{elemento.nome | name}}">{{elemento.nome | citacao}}</td>
+                <td>
+                    <a href="" ng-click="removerAutor(elemento)"><span style="padding: 3px;" title="Remover autor" class="fa fa-trash"></span></a>
+                    <a href="" ng-click="editarAutor(elemento)"><span style="padding: 3px;" title="Editar autor" class="fa fa-pencil" data-toggle="modal" data-target="#autorModal"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!autores.length">Não existem autores a serem demonstrados. Clique em 'Novo' para adicionar!</h5>
+
+    <!-- Modal -->
+    <div class="modal fade" id="autorModal" tabindex="-1" role="dialog" aria-labelledby="autorModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="autorModalLabel">{{!autor.idAutor ? 'Adicionando autor' : 'Editando autor'}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="autorForm" name="autorForm">
+                    <input ng-model="autor.nome" ng-required="true" ng-minlength="5" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
+                </form>
+            
+                <div ng-messages="autorForm.nome.$error" ng-show="autorForm.nome.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo nome!
+                    </div>
+                
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo nome deve possuir no minimo 5 caracteres!
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" ng-click="adicionarAutor(autor)" ng-disabled="autorForm.$invalid" data-dismiss="modal">Salvar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

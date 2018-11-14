@@ -1,0 +1,91 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="emprestimo = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal" data-target="#emprestimoModal">
+                Novo
+            </button>
+        </div>
+    </form>
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table" ng-show="emprestimos.length">
+        <thead>
+            <th><a href="" ng-click="ordenarPor('emprestimo.cliente.nome')">Cliente</a> </th>
+            <th><a href="" ng-click="ordenarPor('dataEmprestimo')">Data empréstimo</a></th>
+            <th><a href="" ng-click="ordenarPor('dataPrevisaoDevolucao')">Data prev. Devolução</a></th>
+            <th><a href="" ng-click="ordenarPor('dataDevolucao')"></a>Data Devolução</a></th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="elemento in emprestimos | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao" ng-class="{'cor-linha negrito': elemento.selecionado}">
+                <td title="{{elemento.client.nome | name}}">{{elemento.cliente.nome}}</td>
+                <td>{{elemento.dataEmprestimo | date:'dd/MM/yyyy'}}</td>
+                <td>{{elemento.dataPrevisaoDevolucao | date:'dd/MM/yyyy'}}</td>
+                <td> {{elemento.dataDevolucao | date:'dd/MM/yyyy'}}</td>
+                <td>
+                    <a href="" ng-click="removerEmprestimo(elemento)"><span style="padding: 3px;" title="Remover emprestimo" class="fa fa-trash"></span></a>
+                    <a href="" ng-click="editarEmprestimo(elemento)"><span style="padding: 3px;" title="Editar emprestimo" class="fa fa-pencil" data-toggle="modal" data-target="#emprestimoModal"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!emprestimos.length">Não existem empréstimos a serem demonstrados. Clique em 'Novo' para adicionar!</h5>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="emprestimoModal" tabindex="-1" role="dialog" aria-labelledby="emprestimoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="emprestimoModalLabel">{{!emprestimo.idEmprestimo ? 'Adicionando empréstimo' : 'Editando empréstimo'}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="emprestimoForm" name="emprestimoForm">
+                    <select id="clientes" class="custom-select" ng-model="emprestimo.cliente" ng-required="true">
+                        <option value ="">Selecione o cliente</option>
+                        <option ng-repeat="cliente in clientes | orderBy:'nome'" ng-value="cliente" ng-selected="emprestimo.cliente.idCliente == cliente.idCliente">
+                            {{cliente.nome}}
+                        </option>
+                    </select>
+                    
+                    <input ng-model="emprestimo.titulo" ng-required="true" ng-minlength="5" class="form-control" type="text" name="titulo" id="titulo" placeholder="Título">
+            
+                    <textarea ng-model="emprestimo.descricao" ng-maxlength="100" ng-minlength="5" class="form-control" type="text" name="descricao" id="descricao" placeholder="Descrição"></textarea>
+            
+                    <input ng-model="emprestimo.mesAnoLancamento" ng-maxlength="15" class="form-control" type="text" name="mesAnoLancamento" id="mesAnoLancamento" placeholder="Mes/Ano de lançamento">
+            
+                    <input ng-model="emprestimo.isbn" class="form-control" type="text" name="isbn" id="isbn" placeholder="ISBN">
+            
+            
+                    <select id="editoras" class="custom-select" ng-model="emprestimo.editora" ng-required="true">
+                        <option value="">Selecione a editora</option>
+                        <option ng-repeat="editora in editoras | orderBy:'nome'" ng-value="editora" ng-selected="emprestimo.editora.idEditora === editora.idEditora">
+                            {{editora.nome}}
+                        </option>
+                    </select>
+                </form>
+            
+                <div ng-messages="emprestimoForm.titulo.$error" ng-show="emprestimoForm.titulo.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo título!
+                    </div>
+                
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo título deve possuir no minimo 5 caracteres!
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" ng-click="adicionarEmprestimo(emprestimo)" ng-disabled="emprestimoForm.$invalid" data-dismiss="modal">Salvar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>

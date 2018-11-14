@@ -1,0 +1,111 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="cliente = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal" data-target="#clienteModal">
+                Novo
+            </button>
+        </div>
+    </form>
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table table-striped table-sm" ng-show="clientes.length">
+        <thead>
+            <th style="width: 5%"><a href="" ng-click="ordenarPor('idCliente')">Cód.</a></th>
+            <th><a href="" ng-click="ordenarPor('nome')">Nome</a></th>
+            <th><a href="" ng-click="ordenarPor('cpf')">CPF</a></th>
+            <th>Endereço</th>
+            <th>Telefone</th>
+            <th>Restrito</th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="elemento in clientes | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao" ng-class="{'cor-linha negrito': elemento.selecionado}">
+                <td style="width: 5%">{{elemento.idCliente}}</td>
+                <td title="{{elemento.nome | name}}">{{elemento.nome}}</td>
+                <td>{{elemento.cpf}}</td>
+                <td>{{elemento.endereco}}</td>
+                <td>{{elemento.telefone}}</td>
+                <td>{{elemento.ativo === 1 ? 'Não' : 'Sim'}}</td>
+                <td>
+                    <a href="" ng-click="removerCliente(elemento)"><span style="padding: 3px;" title="Remover cliente" class="fa fa-trash"></span></a>
+                    <a href="" ng-click="editarCliente(elemento)"><span style="padding: 3px;" title="Editar cliente" class="fa fa-pencil" data-toggle="modal" data-target="#clienteModal"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!clientes.length">Não existem clientes a serem demonstrados. Clique em 'Novo' para adicionar!</h5>
+
+    <!-- Modal -->
+    <div class="modal fade" id="clienteModal" tabindex="-1" role="dialog" aria-labelledby="clienteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clienteModalLabel">{{!cliente.idCliente ? 'Adicionando cliente' : 'Editando cliente'}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="clienteForm" name="clienteForm">
+                    <input ng-model="cliente.nome" ng-required="true" ng-minlength="5" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
+                    <input ng-model="cliente.cpf" ng-required="true" ng-minlength="11" ng-maxlength="11" class="form-control" type="text" name="cpf" id="cpf" placeholder="CPF">
+                    <input ng-model="cliente.endereco" ng-required="true" ng-minlength="5" class="form-control" type="text" name="endereco" id="endereco" placeholder="Endereço">
+                    <input ng-model="cliente.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" class="form-control" type="text" name="telefone" id="telefone" placeholder="Telefone">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" style="margin-top: 10px;margin-bottom: 10px;">
+                        <label ng-class="{active: (cliente.ativo === 1)}" class="btn btn-secondary">
+                            <input type="radio" name="ativo" id="ativo" ng-model="cliente.ativo" value="1" autocomplete="off" ng-checked="cliente.ativo === 1"> Ativo
+                        </label>
+                        <label ng-class="{active: (cliente.ativo === 0)}" class="btn btn-secondary">
+                            <input type="radio" name="restrito" id="retrito" ng-model="cliente.ativo" value="0" autocomplete="off" ng-checked="cliente.ativo === 0"> Restrito
+                        </label>
+                    </div>
+                </form>
+
+                <div ng-messages="clienteForm.nome.$error" ng-show="clienteForm.nome.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo nome!
+                    </div>
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo nome deve possuir no minimo 5 caracteres!
+                    </div>
+                </div>
+                <div ng-messages="clienteForm.cpf.$error" ng-show="clienteForm.cpf.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo CPF!
+                    </div>
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo CPF deve possuir 11 caracteres!
+                    </div>
+                    <div ng-message="maxlength" class="alert alert-danger">
+                        O campo CPF deve possuir 11 caracteres!
+                    </div>
+                </div>
+                <div ng-messages="clienteForm.endereco.$error" ng-show="clienteForm.endereco.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo endereço!
+                    </div>
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo endereco deve possuir no minimo 5 caracteres!
+                    </div>
+                </div>
+                <div ng-show="clienteForm.telefone.$dirty && clienteForm.telefone.$error.required" class="alert alert-danger">
+                    Preencha o campo telefone!
+                </div>
+            
+                <div ng-show="clienteForm.telefone.$error.pattern" class="alert alert-danger">
+                    O campo telefone deve ter o formato DDDDD-DDDD!
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" ng-click="adicionarCliente(cliente)" ng-disabled="clienteForm.$invalid" data-dismiss="modal">Salvar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+</div>

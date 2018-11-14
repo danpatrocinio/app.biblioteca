@@ -1,0 +1,90 @@
+<div>
+    <div style="margin-top: 10px; margin-bottom: 20px;">
+        <h3 style="text-align: center">{{tituloApp}}</h3>
+    </div>
+    <form class="form-inline">
+        <div class="form-row align-items-center">
+            <button ng-click="livro = {}" type="button" class="btn btn-info my-8 my-sm-2" data-toggle="modal" data-target="#livroModal">
+                Novo
+            </button>
+        </div>
+    </form>
+
+    <div class="alert-danger">{{mensagemDeErro}}</div>
+    <table class="table" ng-show="livros.length">
+        <thead>
+            <th>Cód.</th>
+            <th><a href="" ng-click="ordenarPor('titulo')">Título</a> </th>
+            <th><a href="" ng-click="ordenarPor('autor.nome')">Autor</a></th>
+            <th><a href="" ng-click="ordenarPor('editora.nome')">Editora</a></th>
+            <th>Ações</th>
+        </thead>
+        <tbody>
+            <tr ng-repeat="elemento in livros | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao" ng-class="{'cor-linha negrito': elemento.selecionado}">
+                <td style="width: 5%">{{elemento.idLivro}}</td>
+                <td title="{{elemento.titulo | name}}">{{elemento.titulo}}</td>
+                <td>{{elemento.autor.nome | citacao}}</td>
+                <td>{{elemento.editora.nome}}</td>
+                <td>
+                    <a href="" ng-click="removerLivro(elemento)"><span style="padding: 3px;" title="Remover livro" class="fa fa-trash"></span></a>
+                    <a href="" ng-click="editarLivro(elemento)"><span style="padding: 3px;" title="Editar livro" class="fa fa-pencil" data-toggle="modal" data-target="#livroModal"></span></a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h5 style="text-align: center" ng-show="!livros.length">Não existem livros a serem demonstrados. Clique em 'Novo' para adicionar!</h5>
+
+    <!-- Modal -->
+    <div class="modal fade" id="livroModal" tabindex="-1" role="dialog" aria-labelledby="livroModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="livroModalLabel">{{!livro.idLivro ? 'Adicionando livro' : 'Editando livro'}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="livroForm" name="livroForm">
+                    <input ng-model="livro.titulo" ng-required="true" ng-minlength="5" class="form-control" type="text" name="titulo" id="titulo" placeholder="Título">
+            
+                    <textarea ng-model="livro.descricao" ng-maxlength="100" ng-minlength="5" class="form-control" type="text" name="descricao" id="descricao" placeholder="Descrição"></textarea>
+            
+                    <input ng-model="livro.mesAnoLancamento" ng-maxlength="15" class="form-control" type="text" name="mesAnoLancamento" id="mesAnoLancamento" placeholder="Mes/Ano de lançamento">
+            
+                    <input ng-model="livro.isbn" class="form-control" type="text" name="isbn" id="isbn" placeholder="ISBN">
+            
+                    <select id="autores" class="custom-select" ng-model="livro.autor" ng-required="true">
+                        <option value ="">Selecione o autor</option>
+                        <option ng-repeat="autor in autores | orderBy:'nome'" ng-value="autor" ng-selected="livro.autor.idAutor == autor.idAutor">
+                            {{autor.nome}}
+                        </option>
+                    </select>
+            
+                    <select id="editoras" class="custom-select" ng-model="livro.editora" ng-required="true">
+                        <option value="">Selecione a editora</option>
+                        <option ng-repeat="editora in editoras | orderBy:'nome'" ng-value="editora" ng-selected="livro.editora.idEditora === editora.idEditora">
+                            {{editora.nome}}
+                        </option>
+                    </select>
+                </form>
+            
+                <div ng-messages="livroForm.titulo.$error" ng-show="livroForm.titulo.$dirty">
+                    <div ng-message="required" class="alert alert-danger">
+                        Preencha o campo título!
+                    </div>
+                
+                    <div ng-message="minlength" class="alert alert-danger">
+                        O campo título deve possuir no minimo 5 caracteres!
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" ng-click="adicionarLivro(livro)" ng-disabled="livroForm.$invalid" data-dismiss="modal">Salvar</button>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
