@@ -3,18 +3,21 @@ angular.module("app").factory("emprestimosAPI", function($http, configAPI) {
         return $http.get(configAPI.resourceEmprestimos);
     };
 
-    var _saveContato = function(contato) {
-        return $http.post(configAPI.resourceEmprestimos,contato);
+    var _saveEmprestimo = function(emprestimo) {
+        if (!!emprestimo.idEmprestimo) {
+            return $http.put(configAPI.resourceEmprestimos,emprestimo);
+        }
+        return $http.post(configAPI.resourceEmprestimos,emprestimo);
     };
 
-    var _removeContato = function(contatoParaRemover) {
-        var url = configAPI.resourceEmprestimos + "/" + contatoParaRemover.idContato;
+    var _removeEmprestimo = function(emprestimoParaRemover) {
+        var url = configAPI.resourceEmprestimos + "/" + emprestimoParaRemover.idEmprestimo;
         return $http.delete(url);
     }
 
     return {
         getEmprestimos: _getEmprestimos,
-        saveContato: _saveContato,
-        removeContato: _removeContato
+        saveEmprestimo: _saveEmprestimo,
+        removeEmprestimo: _removeEmprestimo
     };
 });

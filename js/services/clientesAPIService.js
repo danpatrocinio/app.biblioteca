@@ -3,6 +3,14 @@ angular.module("app").factory("clientesAPI", function($http, configAPI) {
         return $http.get(configAPI.resourceClientes);
     };
 
+    var _getClientesAtivos = function() {
+        return $http.get(configAPI.resourceClientes + "/ativos");
+    };
+
+    var _getClientesRestritos = function() {
+        return $http.get(configAPI.resourceClientes + "/restritos");
+    };
+
     var _saveCliente = function(cliente) {
         if (!!cliente.idCliente) {
             return $http.put(configAPI.resourceClientes,cliente)
@@ -17,6 +25,8 @@ angular.module("app").factory("clientesAPI", function($http, configAPI) {
 
     return {
         getClientes: _getClientes,
+        getClientesAtivos: _getClientesAtivos,
+        getClientesRestritos: _getClientesRestritos,
         saveCliente: _saveCliente,
         removeCliente: _removeCliente
     };

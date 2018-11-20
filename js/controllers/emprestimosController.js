@@ -12,10 +12,21 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         });
     };
     $scope.clientes = [];
-    var carregaClientes = function() {
-        clientesAPI.getClientes()
+    var carregaClientesAtivos = function() {
+        clientesAPI.getClientesAtivos()
         .then(function(response) {
             $scope.clientes = response.data;
+        })
+        .catch(function(response) {
+            var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
+            $scope.mensagemDeErro = mensagem;
+        });
+    };
+    $scope.livros = [];
+    var carregaLivros = function() {
+        livrosAPI.getLivros()
+        .then(function(response) {
+            $scope.livros = response.data;
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
@@ -35,14 +46,32 @@ angular.module("app").controller("emprestimosController", function($scope, empre
             $scope.mensagemDeErro = mensagem;
         });
     };
+
+    $scope.adicionarLivro = function(emprestimo) {
+        if (!emprestimo.itens) {
+            emprestimo.itens = [];
+        }
+        if (emprestimo.itens.length >= 3) {
+            alert('Número máximo de títulos atingido');
+            return;
+        }
+        var novoItem = { "quantidade" : 1 };
+        emprestimo.itens.push(novoItem);
+    }
+    $scope.removerLivro = function(emprestimo, item) {
+        console.log(item);
+        emprestimo.itens = emprestimo.itens.filter(function(itemInserido) { 
+            return itemInserido !== item;
+        })
+    }
   
     $scope.removerEmprestimo = function(emprestimoParaRemover) {
         if(!confirm('Deseja realmente excluir?')) { 
             return; 
         };
-        emprestimosAPI.removeLivro(emprestimoParaRemover)
+        emprestimosAPI.removeEmprestimo(emprestimoParaRemover)
         .then(function(response) {
-            carregaLivros();
+            carregaEmprestimos();
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
@@ -52,16 +81,24 @@ angular.module("app").controller("emprestimosController", function($scope, empre
     
     $scope.editarEmprestimo = function(emprestimoParaEditar) {
         $scope.emprestimo = angular.copy(emprestimoParaEditar);
+        $scope.emprestimo.dataEmprestimo = convertData(emprestimoParaEditar.dataEmprestimo);
+        $scope.emprestimo.dataPrevisaoDevolucao = convertData(emprestimoParaEditar.dataPrevisaoDevolucao);
+        $scope.emprestimo.dataDevolucao = convertData(emprestimoParaEditar.dataDevolucao);
     };
-    $scope.temEmprestimoSelecionado = function(emprestimos) {
-        return emprestimos.some(function(item) {
-            return item.selecionado;
-        });
-    };
+    
+    var convertData = function(dataLong) {
+        if (!dataLong) {
+            return;
+        }
+        return new Date(dataLong);
+    } 
+    
     $scope.ordenarPor = function(nomeDoCampo) {
         $scope.campoParaOrdenacao = nomeDoCampo;
         $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
     };
     carregaEmprestimos();
-    carregaClientes();
+    carregaClientesAtivos();
+    carregaLivros();
+
 });

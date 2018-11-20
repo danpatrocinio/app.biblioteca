@@ -20,11 +20,12 @@
             <th>Ações</th>
         </thead>
         <tbody>
-            <tr ng-repeat="elemento in emprestimos | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao" ng-class="{'cor-linha negrito': elemento.selecionado}">
+            <tr ng-repeat="elemento in emprestimos | filter:criterioDeBusca | orderBy:campoParaOrdenacao:direcaoDaOrdenacao">
                 <td title="{{elemento.client.nome | name}}">{{elemento.cliente.nome}}</td>
                 <td>{{elemento.dataEmprestimo | date:'dd/MM/yyyy'}}</td>
                 <td>{{elemento.dataPrevisaoDevolucao | date:'dd/MM/yyyy'}}</td>
-                <td> {{elemento.dataDevolucao | date:'dd/MM/yyyy'}}</td>
+                <td ng-show="!!elemento.dataDevolucao"> {{elemento.dataDevolucao | date:'dd/MM/yyyy'}}</td>
+                <td ng-show="!elemento.dataDevolucao">[pendente]</td>
                 <td>
                     <a href="" ng-click="removerEmprestimo(elemento)"><span style="padding: 3px;" title="Remover emprestimo" class="fa fa-trash"></span></a>
                     <a href="" ng-click="editarEmprestimo(elemento)"><span style="padding: 3px;" title="Editar emprestimo" class="fa fa-pencil" data-toggle="modal" data-target="#emprestimoModal"></span></a>
@@ -37,7 +38,7 @@
     
     <!-- Modal -->
     <div class="modal fade" id="emprestimoModal" tabindex="-1" role="dialog" aria-labelledby="emprestimoModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="emprestimoModalLabel">{{!emprestimo.idEmprestimo ? 'Adicionando empréstimo' : 'Editando empréstimo'}}</h5>
@@ -47,30 +48,74 @@
             </div>
             <div class="modal-body">
                 <form id="emprestimoForm" name="emprestimoForm">
-                    <select id="clientes" class="custom-select" ng-model="emprestimo.cliente" ng-required="true">
-                        <option value ="">Selecione o cliente</option>
-                        <option ng-repeat="cliente in clientes | orderBy:'nome'" ng-value="cliente" ng-selected="emprestimo.cliente.idCliente == cliente.idCliente">
-                            {{cliente.nome}}
-                        </option>
-                    </select>
+                    <div class="form-group">
+                        <label for="clientes">Cliente:</label>
+                        <select id="clientes" class="custom-select" ng-model="emprestimo.cliente" ng-required="true">
+                            <option value ="">Selecione o cliente</option>
+                            <option ng-repeat="cliente in clientes | orderBy:'nome'" ng-value="cliente" ng-selected="emprestimo.cliente.idCliente === cliente.idCliente">
+                                {{cliente.nome}}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-inline">
+                        <div class="form-group col-4">
+                            <label>Data empréstimo:</label>
+                            <input ng-model="emprestimo.dataEmprestimo" ng-required="true" class="form-control" type="date" name="dataEmprestimo" id="dataEmprestimo" placeholder="yyyy-MM-dd" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Previsão devolução:</label>
+                            <input ng-model="emprestimo.dataPrevisaoDevolucao" ng-required="true" class="form-control" type="date" name="dataPrevisaoDevolucao" id="dataPrevisaoDevolucao" placeholder="yyyy-MM-dd" required>
+                        </div>
+                        <div class="form-group col-4">
+                            <label>Data devolução:</label>
+                            <input ng-model="emprestimo.dataDevolucao" class="form-control" type="date" name="dataDevolucao" id="dataDevolucao" placeholder="yyyy-MM-dd">
+                        </div>
+                    </div>
+                    <hr>
                     
-                    <input ng-model="emprestimo.titulo" ng-required="true" ng-minlength="5" class="form-control" type="text" name="titulo" id="titulo" placeholder="Título">
-            
-                    <textarea ng-model="emprestimo.descricao" ng-maxlength="100" ng-minlength="5" class="form-control" type="text" name="descricao" id="descricao" placeholder="Descrição"></textarea>
-            
-                    <input ng-model="emprestimo.mesAnoLancamento" ng-maxlength="15" class="form-control" type="text" name="mesAnoLancamento" id="mesAnoLancamento" placeholder="Mes/Ano de lançamento">
-            
-                    <input ng-model="emprestimo.isbn" class="form-control" type="text" name="isbn" id="isbn" placeholder="ISBN">
-            
-            
-                    <select id="editoras" class="custom-select" ng-model="emprestimo.editora" ng-required="true">
-                        <option value="">Selecione a editora</option>
-                        <option ng-repeat="editora in editoras | orderBy:'nome'" ng-value="editora" ng-selected="emprestimo.editora.idEditora === editora.idEditora">
-                            {{editora.nome}}
-                        </option>
-                    </select>
+                    <p class="text-center">Livro(s)</p>
+                    
+                    <div ng-show="!emprestimo.idEmprestimo">
+                        <div id="livros" ng-repeat="item in emprestimo.itens">
+                            <div class="form-inline">
+                                <div class="input-group col-9">
+                                    <select id="livros" class="custom-select" ng-model="item.livro.idLivro" ng-value="item.livro.idLivro" ng-required="true">
+                                        <option value="">Selecione o livro</option>
+                                        <option value="{{livro.idLivro}}" ng-repeat="livro in livros | orderBy:'titulo'" ng-selected="livro.idLivro === item.idLivro">
+                                            {{livro.titulo}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="input-group col-2">
+                                    <input ng-model="item.quantidade" ng-required="true" class="form-control" type="number" name="quantidade" id="quantidade" placeholder="Quantidade" required>
+                                </div>
+                                <a href="" ng-click="removerLivro(emprestimo, item)" title="Remover livro"><span title="Remover emprestimo" class="fa fa-trash">&nbsp</span></a>
+                            </div>
+                        </div>
+                        <p class="text-center">
+                            <a href="" ng-click="adicionarLivro(emprestimo)"><span style="margin-top: 15px;" title="Adicionar livro" class="fa fa-plus"></span></a>
+                        </p>
+                    </div>
+                    <div ng-show="!!emprestimo.idEmprestimo">
+                        <table class="table" ng-show="emprestimo.itens.length">
+                            <thead>
+                                <th>Livro</th>
+                                <th>Quantidade</th>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="elemento in emprestimo.itens">
+                                    <td title="{{elemento.livro.titulo | name}}">{{elemento.livro.titulo}}</td>
+                                    <td>{{elemento.quantidade}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
-            
+                <!--
+                    <br><br>
+                    {{emprestimo}}
+                -->
                 <div ng-messages="emprestimoForm.titulo.$error" ng-show="emprestimoForm.titulo.$dirty">
                     <div ng-message="required" class="alert alert-danger">
                         Preencha o campo título!
