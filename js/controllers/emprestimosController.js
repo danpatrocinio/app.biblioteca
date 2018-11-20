@@ -8,7 +8,7 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
-            $scope.mensagemDeErro = mensagem;
+            $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
     $scope.clientes = [];
@@ -19,7 +19,7 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
-            $scope.mensagemDeErro = mensagem;
+            $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
     $scope.livros = [];
@@ -30,7 +30,7 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
-            $scope.mensagemDeErro = mensagem;
+            $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
     $scope.adicionarEmprestimo = function(emprestimo) {
@@ -43,7 +43,7 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         })
         .catch(function(response) {
             var mensagem = "Deu erro: " + response.status + " - " + response.statusText;
-            $scope.mensagemDeErro = mensagem;
+            $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
 
