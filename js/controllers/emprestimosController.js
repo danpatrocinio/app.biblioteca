@@ -46,7 +46,6 @@ angular.module("app").controller("emprestimosController", function($scope, empre
             $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
-
     $scope.adicionarLivro = function(emprestimo) {
         if (!emprestimo.itens) {
             emprestimo.itens = [];
@@ -57,14 +56,13 @@ angular.module("app").controller("emprestimosController", function($scope, empre
         }
         var novoItem = { "quantidade" : 1 };
         emprestimo.itens.push(novoItem);
-    }
+    };
     $scope.removerLivro = function(emprestimo, item) {
         console.log(item);
         emprestimo.itens = emprestimo.itens.filter(function(itemInserido) { 
             return itemInserido !== item;
         })
-    }
-  
+    };
     $scope.removerEmprestimo = function(emprestimoParaRemover) {
         if(!confirm('Deseja realmente excluir?')) { 
             return; 
@@ -78,7 +76,6 @@ angular.module("app").controller("emprestimosController", function($scope, empre
             $scope.mensagemDeErro = !!response.data.mensagem ? response.data.mensagem : mensagem;
         });
     };
-    
     $scope.editarEmprestimo = function(emprestimoParaEditar) {
         $scope.emprestimo = angular.copy(emprestimoParaEditar);
         $scope.emprestimo.dataEmprestimo = convertData(emprestimoParaEditar.dataEmprestimo);
@@ -91,8 +88,7 @@ angular.module("app").controller("emprestimosController", function($scope, empre
             return;
         }
         return new Date(dataLong);
-    } 
-    
+    };
     $scope.ordenarPor = function(nomeDoCampo) {
         $scope.campoParaOrdenacao = nomeDoCampo;
         $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
@@ -100,5 +96,4 @@ angular.module("app").controller("emprestimosController", function($scope, empre
     carregaEmprestimos();
     carregaClientesAtivos();
     carregaLivros();
-
 });
