@@ -75,7 +75,7 @@
                     <hr>
                     
                     <p class="text-center">Livro(s)</p>
-                    
+                    <!-- Novo Empréstimo -->
                     <div ng-show="!emprestimo.idEmprestimo">
                         <div id="livros" ng-repeat="item in emprestimo.itens">
                             <div class="form-inline">
@@ -97,6 +97,7 @@
                             <a href="" ng-click="adicionarLivro(emprestimo)"><span style="margin-top: 15px;" title="Adicionar livro" class="fa fa-plus"></span></a>
                         </p>
                     </div>
+                    <!-- Editando um empréstimo (devolução) -->
                     <div ng-show="!!emprestimo.idEmprestimo">
                         <table class="table" ng-show="emprestimo.itens.length">
                             <thead>
