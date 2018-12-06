@@ -51,10 +51,22 @@
             </div>
             <div class="modal-body">
                 <form id="clienteForm" name="clienteForm">
-                    <input ng-model="cliente.nome" ng-required="true" ng-minlength="5" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
-                    <input ng-model="cliente.cpf" ng-required="true" ng-minlength="11" ng-maxlength="11" class="form-control" type="text" name="cpf" id="cpf" placeholder="CPF">
-                    <input ng-model="cliente.endereco" ng-required="true" ng-minlength="5" class="form-control" type="text" name="endereco" id="endereco" placeholder="Endereço">
-                    <input ng-model="cliente.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" class="form-control" type="text" name="telefone" id="telefone" placeholder="Telefone">
+                    <div class="form-group">
+                        <label for="nome">Nome:</label>
+                        <input ng-model="cliente.nome" ng-required="true" ng-minlength="5" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF:</label>
+                        <input ng-model="cliente.cpf" ng-required="true" ng-minlength="11" ng-maxlength="11" class="form-control" type="text" name="cpf" id="cpf" placeholder="CPF">
+                    </div>
+                    <div class="form-group">
+                        <label for="endereco">Endereço:</label>
+                        <input ng-model="cliente.endereco" ng-required="true" ng-minlength="5" class="form-control" type="text" name="endereco" id="endereco" placeholder="Endereço">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefone">Telefone:</label>
+                        <input ng-model="cliente.telefone" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/" class="form-control" type="text" name="telefone" id="telefone" placeholder="Telefone">
+                    </div>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons" style="margin-top: 10px;margin-bottom: 10px;">
                         <label ng-class="{active: (cliente.ativo === 1)}" class="btn btn-secondary">
                             <input type="radio" name="ativo" id="ativo" ng-model="cliente.ativo" value="1" autocomplete="off" ng-checked="cliente.ativo === 1"> Ativo

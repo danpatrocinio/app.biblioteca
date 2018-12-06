@@ -43,7 +43,10 @@
             </div>
             <div class="modal-body">
                 <form id="editoraForm" name="editoraForm">
-                    <input ng-model="editora.nome" ng-required="true" ng-minlength="3" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
+                    <div class="form-group">
+                        <label for="nome">Nome: </label>
+                        <input ng-model="editora.nome" ng-required="true" ng-minlength="3" class="form-control" type="text" name="nome" id="nome" placeholder="Nome">
+                    </div>
                 </form>
             
                 <div ng-messages="editoraForm.nome.$error" ng-show="editoraForm.nome.$dirty">
